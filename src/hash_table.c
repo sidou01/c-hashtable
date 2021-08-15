@@ -56,5 +56,4 @@ static void ht_del_hash_table(ht_hash_table* ht)
 
   free(ht->items);
   free(ht);
-
 }
