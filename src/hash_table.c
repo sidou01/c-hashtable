@@ -143,7 +143,7 @@ char *ht_search(ht_hash_table *ht, const char *key)
 }
 
 /*
- * Delete an entry from a hash table given it's key
+ * Delete an entry from a hash table given its key
  */
 
 void ht_delete(ht_hash_table *ht, const char *key)
