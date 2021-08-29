@@ -13,12 +13,12 @@ static ht_item HT_DELETED_ITEM = {NULL, NULL};
    Assign the key and the value
    Return the newly created hash table item
 */
-static ht_item* ht_new_item(const char* k, const char* v)
+static ht_item *ht_new_item(const char *k, const char *v)
 {
-  ht_item* i = malloc(sizeof(ht_item));
-  i->key = strdup(k);
-  i->value = strdup(v);
-  return i;
+    ht_item *i = malloc(sizeof(ht_item));
+    i->key = strdup(k);
+    i->value = strdup(v);
+    return i;
 }
 
 /*
@@ -27,55 +27,58 @@ static ht_item* ht_new_item(const char* k, const char* v)
    Allocate 53 memory slots for ptr to hash table item and set them to NULL (calloc)
 */
 
-ht_hash_table* ht_new()
+ht_hash_table *ht_new()
 {
-  ht_hash_table* ht = malloc(sizeof(ht_hash_table));
+    ht_hash_table *ht = malloc(sizeof(ht_hash_table));
 
-  ht->size = 53;
-  ht->count = 0;
-  ht->items = calloc((size_t)ht->size, sizeof(ht_item*));
-  return ht;
+    ht->size = 53;
+    ht->count = 0;
+    ht->items = calloc((size_t)ht->size, sizeof(ht_item *));
+    return ht;
 }
 
 /*
    Deallocate a hash table item
 */
-static void ht_del_item(ht_item* i)
+static void ht_del_item(ht_item *i)
 {
-  free(i->key);
-  free(i->value);
-  free(i);
+    free(i->key);
+    free(i->value);
+    free(i);
 }
 
 /*
    Deallocate a hash table
 */
-void ht_del_hash_table(ht_hash_table* ht)
+void ht_del_hash_table(ht_hash_table *ht)
 {
-  for(int i = 0; i < ht->size; i++) {
-    ht_item* item = ht->items[i];
-    if(item != NULL) {
-      ht_del_item(item);
+    for (int i = 0; i < ht->size; i++)
+    {
+        ht_item *item = ht->items[i];
+        if (item != NULL)
+        {
+            ht_del_item(item);
+        }
     }
-  }
 
-  free(ht->items);
-  free(ht);
+    free(ht->items);
+    free(ht);
 }
 
 /*
  * Hash function
  */
 
-static int ht_hash(const char* s, const int a, const int m)
+static int ht_hash(const char *s, const int a, const int m)
 {
     long hash = 0;
     const int len_s = strlen(s);
-    for(int i = 0; i < len_s; i++) {
-        hash += (long) pow(a, len_s - (i+1)) * s[i];
+    for (int i = 0; i < len_s; i++)
+    {
+        hash += (long)pow(a, len_s - (i + 1)) * s[i];
         hash = hash % m;
     }
-    return (int) hash;
+    return (int)hash;
 }
 
 /*
@@ -83,7 +86,7 @@ static int ht_hash(const char* s, const int a, const int m)
  * i: number of hash collisions
  */
 
-static int ht_get_hash(const char* s, const int num_buckets, const int attempt)
+static int ht_get_hash(const char *s, const int num_buckets, const int attempt)
 {
     const int hash_a = ht_hash(s, HT_PRIME_1, num_buckets);
     const int hash_b = ht_hash(s, HT_PRIME_2, num_buckets);
@@ -94,15 +97,17 @@ static int ht_get_hash(const char* s, const int num_buckets, const int attempt)
  * Insert a new entry to the hash table
  */
 
-void ht_insert(ht_hash_table* ht, const char* key, const char* value)
+void ht_insert(ht_hash_table *ht, const char *key, const char *value)
 {
-    ht_item* item = ht_new_item(key, value);
+    ht_item *item = ht_new_item(key, value);
     int hash = ht_get_hash(item->key, ht->size, 0);
-    ht_item* cur_item = ht->items[hash];
+    ht_item *cur_item = ht->items[hash];
 
     int i = 0;
-    if(cur_item != NULL && cur_item != &HT_DELETED_ITEM) {
-        if(strcmp(cur_item->key, key) == 0) {
+    if (cur_item != NULL && cur_item != &HT_DELETED_ITEM)
+    {
+        if (strcmp(cur_item->key, key) == 0)
+        {
             ht_del_item(cur_item);
             ht->items[hash] = item;
             return;
@@ -118,15 +123,16 @@ void ht_insert(ht_hash_table* ht, const char* key, const char* value)
 /*
  * Search for a key in the hash table
  */
-char* ht_search(ht_hash_table* ht, const char* key)
+char *ht_search(ht_hash_table *ht, const char *key)
 {
     int hash = ht_get_hash(key, ht->size, 0);
-    ht_item* item = ht->items[hash];
+    ht_item *item = ht->items[hash];
 
     int i = 1;
-    while(item != NULL) {
-        if(item != &HT_DELETED_ITEM)
-            if(strcmp(item->key, key) == 0)
+    while (item != NULL)
+    {
+        if (item != &HT_DELETED_ITEM)
+            if (strcmp(item->key, key) == 0)
                 return item->value;
 
         hash = ht_get_hash(key, ht->size, i);
@@ -140,15 +146,18 @@ char* ht_search(ht_hash_table* ht, const char* key)
  * Delete an entry from a hash table given it's key
  */
 
-void ht_delete(ht_hash_table* ht, const char* key)
+void ht_delete(ht_hash_table *ht, const char *key)
 {
     int hash = ht_get_hash(key, ht->size, 0);
-    ht_item* item = ht->items[hash];
+    ht_item *item = ht->items[hash];
 
     int i = 1;
-    while(item != NULL) {
-        if(item != &HT_DELETED_ITEM) {
-            if(strcmp(item->key, key) == 0) {
+    while (item != NULL)
+    {
+        if (item != &HT_DELETED_ITEM)
+        {
+            if (strcmp(item->key, key) == 0)
+            {
                 ht_del_item(item);
                 ht->items[hash] = &HT_DELETED_ITEM;
             }
