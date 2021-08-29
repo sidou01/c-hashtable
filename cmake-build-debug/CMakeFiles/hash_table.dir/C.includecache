@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/mac/Projects/hash-table/src/hash_table.c
+stdlib.h
+-
+string.h
+-
+math.h
+-
+hash_table.h
+/Users/mac/Projects/hash-table/src/hash_table.h
+
+/Users/mac/Projects/hash-table/src/hash_table.h
+
